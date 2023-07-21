@@ -102,7 +102,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     compactType: "vertical",
     preventCollision: false,
     droppingItem: {
-      i: "__dropping-elem__",
+      id: "__dropping-elem__",
       h: 1,
       w: 1
     },

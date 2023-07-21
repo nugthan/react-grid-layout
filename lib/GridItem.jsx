@@ -36,7 +36,7 @@ import type {
 
 type PartialPosition = { top: number, left: number };
 type GridItemCallback<Data: GridDragEvent | GridResizeEvent> = (
-  i: string,
+  id: string,
   w: number,
   h: number,
   Data
@@ -80,7 +80,7 @@ type Props = {
   maxW: number,
   minH: number,
   maxH: number,
-  i: string,
+  id: string,
 
   resizeHandles?: ResizeHandleAxis[],
   resizeHandle?: ResizeHandle,
@@ -156,7 +156,7 @@ export default class GridItem extends React.Component<Props, State> {
     },
 
     // ID is nice to have for callbacks
-    i: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
 
     // Resize handle options
     resizeHandles: resizeHandleAxesType,
@@ -453,7 +453,7 @@ export default class GridItem extends React.Component<Props, State> {
       this.props.h
     );
 
-    return onDragStart.call(this, this.props.i, x, y, {
+    return onDragStart.call(this, this.props.id, x, y, {
       e,
       node,
       newPosition
@@ -478,7 +478,7 @@ export default class GridItem extends React.Component<Props, State> {
     let top = this.state.dragging.top + deltaY;
     let left = this.state.dragging.left + deltaX;
 
-    const { isBounded, i, w, h, containerWidth } = this.props;
+    const { isBounded, id, w, h, containerWidth } = this.props;
     const positionParams = this.getPositionParams();
 
     // Boundary calculations; keeps items within the grid
@@ -503,7 +503,7 @@ export default class GridItem extends React.Component<Props, State> {
 
     // Call callback with this data
     const { x, y } = calcXY(positionParams, top, left, w, h);
-    return onDrag.call(this, i, x, y, {
+    return onDrag.call(this, id, x, y, {
       e,
       node,
       newPosition
@@ -522,14 +522,14 @@ export default class GridItem extends React.Component<Props, State> {
     if (!this.state.dragging) {
       throw new Error("onDragEnd called before onDragStart.");
     }
-    const { w, h, i } = this.props;
+    const { w, h, id } = this.props;
     const { left, top } = this.state.dragging;
     const newPosition: PartialPosition = { top, left };
     this.setState({ dragging: null });
 
     const { x, y } = calcXY(this.getPositionParams(), top, left, w, h);
 
-    return onDragStop.call(this, i, x, y, {
+    return onDragStop.call(this, id, x, y, {
       e,
       node,
       newPosition
@@ -587,7 +587,7 @@ export default class GridItem extends React.Component<Props, State> {
   ): void {
     const handler = this.props[handlerName];
     if (!handler) return;
-    const { cols, x, y, i, maxH, minH } = this.props;
+    const { cols, x, y, id, maxH, minH } = this.props;
     let { minW, maxW } = this.props;
 
     // Get new XY
@@ -611,7 +611,7 @@ export default class GridItem extends React.Component<Props, State> {
 
     this.setState({ resizing: handlerName === "onResizeStop" ? null : size });
 
-    handler.call(this, i, w, h, { e, node, size });
+    handler.call(this, id, w, h, { e, node, size });
   }
 
   render(): ReactNode {
